@@ -802,7 +802,7 @@
 
         <div class="stat stat--dark">
           <div class="lbl">Producción de concreto desde</div>
-          <div class="num"><span class="num__value">1.0</span>m<sup>3</sup></div>
+          <div class="num"><span class="num__value">1</span>m<sup>3</sup></div>
         </div>
       </div>
     </div>
@@ -1134,7 +1134,7 @@
       .to(counter, {
         n:1, duration:1, ease:'sine.inOut',
         onUpdate:()=>{ val.textContent = counter.n.toFixed(1); },
-        onComplete:()=>{ val.textContent = '1.0'; }
+        onComplete:()=>{ val.textContent = '1'; }
       }, '-=0.3');
 
     // Hover: elevación ligera y sombra suave, sin cambios bruscos
