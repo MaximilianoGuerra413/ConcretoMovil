@@ -259,6 +259,17 @@
   .price-card__notes .ico-check{ background:rgba(31,157,87,.12); color:#1f9d57; }
   .price-card__notes .ico-info{ background:rgba(2,4,7,.06); color:rgba(2,4,7,.55); }
 
+  /* ---------- Tarjeta de precio: estado oculto / revelado ---------- */
+  .price-card__stage{ position:relative; }
+  .price-card__teaser{ display:flex; flex-direction:column; align-items:flex-start; }
+  .price-card__teaser-text{
+    font-size:15px; font-weight:500; color:rgba(2,4,7,.68);
+    margin:4px 0 16px; line-height:1.4;
+  }
+  .price-card__reveal-btn{ padding:12px 22px; font-size:15px; }
+  .price-card__reveal-btn svg{ width:18px; height:18px; fill:var(--ink); }
+  .price-card__reveal{ display:none; flex-direction:column; }
+
   /* ---------- Tarjeta Venta ---------- */
   .venta{
     margin-top:26px; margin-inline:auto; max-width:70%; border:1.5px solid var(--orange); border-radius:var(--radius);
@@ -717,10 +728,22 @@
           </div>
         </div>
 
-        <div class="price-card">
-          <span class="price-card__label">Desde</span>
-          <div class="price-card__amount">$2,499,900 <span class="unit">MXN</span></div>
-          <div class="price-card__iva">+ IVA</div>
+        <div class="price-card" id="priceCard" data-revealed="false">
+          <div class="price-card__stage">
+            <div class="price-card__teaser" id="priceTeaser">
+              <span class="price-card__label">Precio del equipo</span>
+              <p class="price-card__teaser-text">Conoce el precio de esta unidad.</p>
+              <button type="button" class="btn btn-orange price-card__reveal-btn" id="revealPriceBtn" aria-expanded="false" aria-controls="priceReveal">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5C21.27 7.61 17 4.5 12 4.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
+                <span>Ver precio</span>
+              </button>
+            </div>
+            <div class="price-card__reveal" id="priceReveal" aria-hidden="true">
+              <span class="price-card__label">Desde</span>
+              <div class="price-card__amount">$2,499,900 <span class="unit">MXN</span></div>
+              <div class="price-card__iva">+ IVA</div>
+            </div>
+          </div>
           <ul class="price-card__notes">
             <li><span class="ico ico-check">&#10003;</span> Incluye únicamente la planta dosificadora.</li>
             <li><span class="ico ico-info">&#8505;</span> El tractocamión se vende por separado.</li>
@@ -1156,25 +1179,25 @@
     if(reduced || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
     gsap.registerPlugin(ScrollTrigger);
 
-    const amount = card.querySelector('.price-card__amount');
-    const iva = card.querySelector('.price-card__iva');
+    const teaserLabel = card.querySelector('.price-card__teaser .price-card__label');
+    const teaserText = card.querySelector('.price-card__teaser-text');
+    const teaserBtn = card.querySelector('.price-card__reveal-btn');
     const notes = card.querySelectorAll('.price-card__notes li');
-    if(!amount || !iva) return;
+    if(!teaserLabel || !teaserText || !teaserBtn) return;
 
     const baseShadow = '0 10px 24px rgba(2,4,7,.10)';
     const hoverShadow = '0 20px 40px rgba(2,4,7,.18)';
 
     gsap.set(card, { opacity:0, y:40, scale:0.96, boxShadow:baseShadow, borderColor:'rgba(255,106,0,0)' });
-    gsap.set(amount, { opacity:0, scale:0.85, y:14, transformOrigin:'left center' });
-    gsap.set([iva, ...notes], { opacity:0, y:10 });
+    gsap.set([teaserLabel, teaserText, teaserBtn, ...notes], { opacity:0, y:10 });
 
     const tl = gsap.timeline({
       scrollTrigger:{ trigger:card, start:'top 85%', once:true }
     });
     tl.to(card, { opacity:1, y:0, scale:1, duration:1.1, ease:'power3.out' })
-      .to(amount, { opacity:1, scale:1, y:0, duration:.9, ease:'power3.out' }, '-=0.75')
-      .to(iva, { opacity:1, y:0, duration:.5, ease:'power3.out' }, '-=0.45')
-      .to(notes, { opacity:1, y:0, duration:.5, ease:'power3.out', stagger:.15 }, '-=0.3');
+      .to([teaserLabel, teaserText], { opacity:1, y:0, duration:.6, ease:'power3.out', stagger:.1 }, '-=0.75')
+      .to(teaserBtn, { opacity:1, y:0, duration:.5, ease:'power3.out' }, '-=0.35')
+      .to(notes, { opacity:1, y:0, duration:.5, ease:'power3.out', stagger:.15 }, '-=0.25');
 
     // Hover: elevación sutil, sombra más marcada y borde naranja discreto
     if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
@@ -1185,6 +1208,58 @@
         gsap.to(card, { y:0, boxShadow:baseShadow, borderColor:'rgba(255,106,0,0)', duration:.3, ease:'power2.out', overwrite:'auto' });
       });
     }
+  })();
+
+  // ===== Tarjeta de precio: revelar precio al clic (con tracking para GA4/GTM) =====
+  (function(){
+    const card = document.getElementById('priceCard');
+    const btn = document.getElementById('revealPriceBtn');
+    const teaser = document.getElementById('priceTeaser');
+    const reveal = document.getElementById('priceReveal');
+    if(!card || !btn || !teaser || !reveal) return;
+
+    function trackPriceReveal(){
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event:'ver_precio_click', model:'08CM50', unit_price_mxn:2499900 });
+      if(typeof gtag === 'function'){
+        gtag('event', 'ver_precio_click', { event_category:'engagement', event_label:'Modelo 08CM50' });
+      }
+    }
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    btn.addEventListener('click', ()=>{
+      if(card.dataset.revealed === 'true') return;
+      card.dataset.revealed = 'true';
+      btn.setAttribute('aria-expanded', 'true');
+      trackPriceReveal();
+
+      if(reduced || typeof gsap === 'undefined'){
+        teaser.style.display = 'none';
+        reveal.style.display = 'flex';
+        reveal.setAttribute('aria-hidden', 'false');
+        return;
+      }
+
+      reveal.style.display = 'flex';
+      reveal.style.height = 'auto';
+      const targetHeight = reveal.scrollHeight;
+      gsap.set(reveal, { height:0, opacity:0, overflow:'hidden' });
+      reveal.setAttribute('aria-hidden', 'false');
+
+      const tl = gsap.timeline();
+      tl.to(teaser, {
+          opacity:0, y:-8, scale:.97, duration:.3, ease:'power2.out',
+          onComplete:()=>{ teaser.style.display = 'none'; }
+        })
+        .to(reveal, { height:targetHeight, duration:.55, ease:'power3.out' }, '-=0.05')
+        .to(reveal, {
+          opacity:1, duration:.4, ease:'power2.out',
+          onComplete:()=>{ gsap.set(reveal, { height:'auto', overflow:'visible' }); }
+        }, '-=0.35')
+        .fromTo(reveal.querySelectorAll('.price-card__label, .price-card__amount, .price-card__iva'),
+          { y:10 }, { y:0, duration:.4, ease:'power2.out', stagger:.06 }, '-=0.35');
+    });
   })();
 
 </script>
