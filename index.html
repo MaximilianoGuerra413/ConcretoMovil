@@ -137,6 +137,14 @@
     text-shadow:0 2px 8px rgba(2,4,7,.5);
   }
   .hero .btn{ margin-top:32px; position:relative; overflow:hidden; }
+  .hero .btn-white{ transition:transform 350ms var(--ease-out), box-shadow 350ms ease, filter 350ms ease; }
+  @media (hover:hover) and (pointer:fine){
+    .hero .btn-white:hover{
+      transform:translateY(-2px) scale(1.06);
+      box-shadow:0 16px 34px rgba(0,0,0,.22), 0 0 22px rgba(247,169,64,.45);
+      filter:brightness(1.05);
+    }
+  }
   .hero .btn::after{
     content:""; position:absolute; top:0; bottom:0; left:-70%; width:55%;
     background:linear-gradient(100deg, transparent 0%, rgba(255,255,255,.95) 50%, transparent 100%);
@@ -264,8 +272,12 @@
     width:132px; white-space:normal; line-height:1.25;
     text-align:center; padding:16px 10px;
     animation:btn-simple-glow 2.2s ease-in-out infinite;
+    transition:transform 300ms var(--ease-out), box-shadow 300ms ease, background 300ms ease;
   }
   .venta .btn:hover{ animation-play-state:paused; }
+  @media (hover:hover) and (pointer:fine){
+    .venta .btn:hover{ transform:translateY(-6px) scale(1.05); box-shadow:0 16px 30px rgba(2,4,7,.22); }
+  }
   @keyframes btn-simple-glow{
     0%, 100%{ box-shadow:0 0 0 rgba(247,169,64,0); }
     50%{ box-shadow:0 0 30px 9px rgba(247,169,64,.85); }
@@ -275,6 +287,12 @@
   }
   .venta li::before{
     content:"\2726"; color:var(--orange); font-size:16px; line-height:1; flex:none;
+    display:inline-block;
+  }
+  .venta li.in::before{ animation:venta-ico-spin 450ms var(--ease-out); }
+  @keyframes venta-ico-spin{
+    from{ transform:rotate(-20deg); }
+    to{ transform:rotate(0deg); }
   }
 
   /* ---------- Equipo (video + descripción) ---------- */
@@ -356,11 +374,12 @@
   .stat-stack{ display:flex; flex-direction:column; gap:24px; }
   .feature{
     border:1.5px solid var(--orange); border-radius:var(--radius); padding:28px;
-    transition:transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out), border-color 220ms var(--ease-out);
+    transition:transform 350ms var(--ease-out), box-shadow 350ms var(--ease-out), border-color 350ms var(--ease-out);
   }
   .feature .ico{
     width:60px;height:60px;border-radius:12px;background:var(--orange);
     display:grid;place-items:center; margin-bottom:18px;
+    transition:transform 350ms var(--ease-out);
   }
   .feature .ico svg{ width:30px;height:30px; fill:var(--ink); }
   .feature .ico img{ width:32px;height:32px; object-fit:contain; }
@@ -368,25 +387,29 @@
   .feature p{ color:var(--gray); font-size:16px; }
   .adv-card{
     border:1.5px solid var(--orange); border-radius:var(--radius); padding:28px;
-    transition:transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+    transition:transform 350ms var(--ease-out), box-shadow 350ms var(--ease-out);
   }
   .adv-card h3{ font-size:30px; margin-bottom:18px; }
   .adv-card ul{ list-style:none; display:grid; gap:14px; }
   .adv-card li{ display:flex; gap:12px; color:var(--gray); font-size:16px; }
-  .adv-card li svg{ width:20px;height:20px; fill:var(--orange); flex:none; margin-top:2px; }
+  .adv-card li svg{ width:20px;height:20px; fill:var(--orange); flex:none; margin-top:2px; transition:transform 350ms var(--ease-out); }
   .stat{
     border-radius:var(--radius); padding:28px; display:flex; flex-direction:column; justify-content:center;
-    transition:transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+    transition:transform 350ms var(--ease-out), box-shadow 350ms var(--ease-out);
   }
   @media (hover:hover) and (pointer:fine){
-    .feature:hover{ transform:translateY(-9px) scale(1.02); border-color:var(--orange-dark); box-shadow:0 20px 36px rgba(2,4,7,.14); }
-    .adv-card:hover{ transform:translateY(-9px) scale(1.02); box-shadow:0 20px 36px rgba(2,4,7,.14); }
-    .stat:hover{ transform:translateY(-9px) scale(1.02); box-shadow:0 20px 36px rgba(2,4,7,.18); }
+    .feature:hover{ transform:translateY(-7px) scale(1.02); border-color:var(--orange-dark); box-shadow:0 18px 32px rgba(2,4,7,.14); }
+    .feature:hover .ico{ transform:rotate(8deg); }
+    .adv-card:hover{ transform:translateY(-7px) scale(1.02); box-shadow:0 18px 32px rgba(2,4,7,.14); }
+    .adv-card:hover li svg{ transform:rotate(8deg); }
+    .adv-card:hover li:nth-child(2) svg{ transition-delay:60ms; }
+    .adv-card:hover li:nth-child(3) svg{ transition-delay:120ms; }
+    .stat:hover{ transform:translateY(-7px) scale(1.02); box-shadow:0 18px 32px rgba(2,4,7,.18); }
   }
   @media (hover:none){
-    .feature:active{ transform:scale(1.02); border-color:var(--orange-dark); box-shadow:0 20px 36px rgba(2,4,7,.14); }
-    .adv-card:active{ transform:scale(1.02); box-shadow:0 20px 36px rgba(2,4,7,.14); }
-    .stat:active{ transform:scale(1.02); box-shadow:0 20px 36px rgba(2,4,7,.18); }
+    .feature:active{ transform:scale(1.02); border-color:var(--orange-dark); box-shadow:0 18px 32px rgba(2,4,7,.14); }
+    .adv-card:active{ transform:scale(1.02); box-shadow:0 18px 32px rgba(2,4,7,.14); }
+    .stat:active{ transform:scale(1.02); box-shadow:0 18px 32px rgba(2,4,7,.18); }
   }
   .stat--orange{ background:var(--orange); color:var(--ink); }
   .stat--dark{
@@ -551,10 +574,9 @@
 
   /* Cascada suave para grupos de tarjetas que entran juntas */
   .specs-grid > .reveal:nth-child(1){ transition-delay:0ms; }
-  .specs-grid > .reveal:nth-child(2){ transition-delay:60ms; }
-  .specs-grid > .reveal:nth-child(3){ transition-delay:120ms; }
-  .specs-grid > .stat-stack .reveal:nth-child(1){ transition-delay:150ms; }
-  .specs-grid > .stat-stack .reveal:nth-child(2){ transition-delay:210ms; }
+  .specs-grid > .reveal:nth-child(2){ transition-delay:120ms; }
+  .specs-grid > .reveal:nth-child(3){ transition-delay:240ms; }
+  .specs-grid > .stat-stack .reveal:nth-child(1){ transition-delay:360ms; }
 
   @media (prefers-reduced-motion:reduce){
     .reveal{ opacity:1; transform:none; transition:none; }
@@ -1040,12 +1062,16 @@
     const specs = section.querySelectorAll('.spec');
     const venta = section.querySelector('.venta');
     if(!card || !truck || !venta) return;
+    const ventaItems = venta.querySelectorAll('li');
+    const ventaTitle = venta.querySelector('h3');
 
     gsap.set(section, { opacity:0 });
     gsap.set(card, { opacity:0, scale:0.9, boxShadow:'0 0px 0px rgba(2,4,7,0)' });
     gsap.set(truck, { opacity:0, x:-50 });
     gsap.set([badge, ...specs], { opacity:0, y:16 });
     gsap.set(venta, { opacity:0, y:24 });
+    gsap.set(ventaItems, { opacity:0, y:14 });
+    if(ventaTitle){ gsap.set(ventaTitle, { opacity:0, scale:0.4, transformOrigin:'left center' }); }
 
     const tl = gsap.timeline({
       scrollTrigger:{ trigger:section, start:'top 78%', end:'bottom 20%', toggleActions:'restart reverse restart reverse' }
@@ -1055,6 +1081,11 @@
       .to(truck, { opacity:1, x:0, duration:.8, ease:'power3.out' }, .3)
       .to([badge, ...specs], { opacity:1, y:0, duration:.55, ease:'power3.out', stagger:.15 }, .45)
       .to(venta, { opacity:1, y:0, duration:.6, ease:'power3.out' }, '>-0.1');
+    if(ventaTitle){ tl.to(ventaTitle, { opacity:1, scale:1, duration:.65, ease:'back.out(1.6)' }, '<'); }
+    tl.to(ventaItems, {
+        opacity:1, y:0, duration:.45, ease:'power3.out',
+        stagger:{ each:.12, onStart(){ this.targets()[0].classList.add('in'); } }
+      }, '<0.1');
 
     // Flotación sutil y continua del camión
     const floatTween = gsap.to(truck, {
