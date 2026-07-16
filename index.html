@@ -684,6 +684,19 @@
     .prod-top{ height:150px; }
     footer .wrap{ grid-template-columns:1fr 1fr; }
   }
+
+  /* ---------- Producción (barras): tablet ----------
+     El camión usa un ancho fijo (460px) que no se reducía en resoluciones
+     intermedias, y la franja blanca superior se achicaba (900px) sin
+     achicar el camión, provocando que la imagen invadiera la tarjeta de
+     "Producción Móvil". Aquí se reduce el camión y se le da a la franja
+     y al espaciado superior el tamaño que ese camión más pequeño necesita,
+     solo en este rango. */
+  @media (min-width:768px) and (max-width:1024px){
+    .prod-top{ height:220px; }
+    .prod-top .prod-truck{ width:300px; max-width:40%; }
+    .prod-band .wrap{ padding-top:64px; }
+  }
   @media (max-width:620px){
     section{ padding-block:48px; }
     .promo-card{ padding:36px 24px; border-radius:20px; }
@@ -1165,7 +1178,7 @@
     });
   })();
 
-  // ===== GSAP + ScrollTrigger: sección "Modelo, capacidad y precio" =====
+  // ===== GSAP + ScrollTrigger: sección "Modelo, capacidad. y precio" =====
   (function(){
     const section = document.getElementById('modelo');
     if(!section) return;
@@ -1361,3 +1374,6 @@
 
 </body>
 </html>
+p r u e b a 
+ 
+ 
