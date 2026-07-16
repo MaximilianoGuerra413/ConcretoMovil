@@ -148,12 +148,13 @@
   .hero .btn::after{
     content:""; position:absolute; top:0; bottom:0; left:-70%; width:55%;
     background:linear-gradient(100deg, transparent 0%, rgba(255,255,255,.95) 50%, transparent 100%);
-    transform:skewX(-20deg);
+    transform:translateX(0%) skewX(-20deg);
     animation:btn-shine 2.6s ease-in-out infinite;
+    will-change:transform;
   }
   @keyframes btn-shine{
-    0%{ left:-70%; }
-    45%, 100%{ left:140%; }
+    0%{ transform:translateX(0%) skewX(-20deg); }
+    45%, 100%{ transform:translateX(381.82%) skewX(-20deg); }
   }
   @media (prefers-reduced-motion:reduce){
     .hero .btn::after{ animation:none; display:none; }
@@ -191,6 +192,8 @@
     background:var(--orange); border-radius:26px;
     display:grid; grid-template-columns:1.05fr 1fr; gap:20px; align-items:stretch;
     padding:36px 40px; overflow:hidden;
+    box-shadow:0 20px 44px rgba(2,4,7,.18);
+    will-change:opacity, transform;
   }
   .product-card .media{
     position:relative; overflow:hidden;
@@ -280,21 +283,28 @@
   .venta ul{ list-style:none; display:grid; gap:10px; }
   .venta li{ display:flex; align-items:center; gap:12px; font-size:17px; }
   .venta .btn{
+    position:relative;
     width:132px; white-space:normal; line-height:1.25;
     text-align:center; padding:16px 10px;
-    animation:btn-simple-glow 2.2s ease-in-out infinite;
     transition:transform 300ms var(--ease-out), box-shadow 300ms ease, background 300ms ease;
   }
-  .venta .btn:hover{ animation-play-state:paused; }
+  .venta .btn::after{
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    box-shadow:0 0 30px 9px rgba(247,169,64,.85);
+    opacity:0; pointer-events:none;
+    animation:btn-simple-glow 2.2s ease-in-out infinite;
+    will-change:opacity;
+  }
+  .venta .btn:hover::after{ animation-play-state:paused; opacity:0; }
   @media (hover:hover) and (pointer:fine){
     .venta .btn:hover{ transform:translateY(-6px) scale(1.05); box-shadow:0 16px 30px rgba(2,4,7,.22); }
   }
   @keyframes btn-simple-glow{
-    0%, 100%{ box-shadow:0 0 0 rgba(247,169,64,0); }
-    50%{ box-shadow:0 0 30px 9px rgba(247,169,64,.85); }
+    0%, 100%{ opacity:0; }
+    50%{ opacity:1; }
   }
   @media (prefers-reduced-motion:reduce){
-    .venta .btn{ animation:none; }
+    .venta .btn::after{ animation:none; opacity:0; }
   }
   .venta li::before{
     content:"\2726"; color:var(--orange); font-size:16px; line-height:1; flex:none;
@@ -1173,7 +1183,7 @@
     const ventaTitle = venta.querySelector('h3');
 
     gsap.set(section, { opacity:0 });
-    gsap.set(card, { opacity:0, scale:0.9, boxShadow:'0 0px 0px rgba(2,4,7,0)' });
+    gsap.set(card, { opacity:0, scale:0.9 });
     gsap.set(truck, { opacity:0, x:-50 });
     gsap.set([badge, ...specs], { opacity:0, y:16 });
     gsap.set(venta, { opacity:0, y:24 });
@@ -1184,7 +1194,7 @@
       scrollTrigger:{ trigger:section, start:'top 78%', end:'bottom 20%', toggleActions:'restart reverse restart reverse' }
     });
     tl.to(section, { opacity:1, duration:.6, ease:'power2.out' })
-      .to(card, { opacity:1, scale:1, boxShadow:'0 20px 44px rgba(2,4,7,.18)', duration:.7, ease:'power3.out' }, .15)
+      .to(card, { opacity:1, scale:1, duration:.7, ease:'power3.out' }, .15)
       .to(truck, { opacity:1, x:0, duration:.8, ease:'power3.out' }, .3)
       .to([badge, ...specs], { opacity:1, y:0, duration:.55, ease:'power3.out', stagger:.15 }, .45)
       .to(venta, { opacity:1, y:0, duration:.6, ease:'power3.out' }, '>-0.1');
