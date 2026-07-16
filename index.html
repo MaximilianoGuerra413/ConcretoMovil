@@ -416,7 +416,7 @@
     background:var(--ink-2); color:var(--white); border:1px solid var(--panel-border);
     position:relative; overflow:hidden;
   }
-  .stat .num{ font-size:60px; font-weight:900; line-height:1; }
+  .stat .num{ font-size:60px; font-weight:900; line-height:1; font-variant-numeric:tabular-nums; }
   .stat .num sup{ font-size:.5em; }
   .stat .lbl{ font-size:16px; margin-top:10px; opacity:.9; }
   .stat--dark .lbl{ order:-1; margin:0 0 8px; }
@@ -802,7 +802,7 @@
 
         <div class="stat stat--dark">
           <div class="lbl">Producción de concreto desde</div>
-          <div class="num">1m<sup>3</sup></div>
+          <div class="num"><span class="num__value">1.0</span>m<sup>3</sup></div>
         </div>
       </div>
     </div>
@@ -1108,27 +1108,34 @@
   (function(){
     const card = document.querySelector('.stat--dark');
     if(!card) return;
+    const num = card.querySelector('.num');
+    const val = card.querySelector('.num__value');
+    const lbl = card.querySelector('.lbl');
+    if(!num || !lbl || !val) return;
+
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if(reduced || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
     gsap.registerPlugin(ScrollTrigger);
-
-    const num = card.querySelector('.num');
-    const lbl = card.querySelector('.lbl');
-    if(!num || !lbl) return;
 
     const baseShadow = '0 2px 6px rgba(0,0,0,.10)';
     const hoverShadow = '0 14px 28px rgba(0,0,0,.25)';
 
     gsap.set(card, { opacity:0, y:30, boxShadow:baseShadow });
-    gsap.set(num, { opacity:0, scale:0.9, y:15 });
     gsap.set(lbl, { opacity:0, y:12 });
+    val.textContent = '0.0';
 
+    // Contador 0.0 -> 1.0 m³: una sola vez, sin rebote ni repetición
+    const counter = { n:0 };
     const tl = gsap.timeline({
-      scrollTrigger:{ trigger:card, start:'top 82%', end:'bottom 20%', toggleActions:'restart reverse restart reverse' }
+      scrollTrigger:{ trigger:card, start:'top 82%', once:true }
     });
-    tl.to(card, { opacity:1, y:0, duration:.8, ease:'power3.out', onStart:()=>card.classList.add('line-in'), onReverseComplete:()=>card.classList.remove('line-in') })
-      .to(num, { opacity:1, scale:1, y:0, duration:.6, ease:'power3.out' }, '-=0.5')
-      .to(lbl, { opacity:1, y:0, duration:.5, ease:'power3.out' }, '-=0.35');
+    tl.to(card, { opacity:1, y:0, duration:.8, ease:'power3.out', onStart:()=>card.classList.add('line-in') })
+      .to(lbl, { opacity:1, y:0, duration:.5, ease:'power3.out' }, '-=0.35')
+      .to(counter, {
+        n:1, duration:1, ease:'sine.inOut',
+        onUpdate:()=>{ val.textContent = counter.n.toFixed(1); },
+        onComplete:()=>{ val.textContent = '1.0'; }
+      }, '-=0.3');
 
     // Hover: elevación ligera y sombra suave, sin cambios bruscos
     if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
