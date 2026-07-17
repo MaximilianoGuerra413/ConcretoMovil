@@ -540,21 +540,28 @@
   .promo-card__title{ font-size:clamp(28px,4vw,40px); }
   .promo-card__title .accent{ color:var(--orange); }
   .promo-amount{
-    display:inline-block;
-    opacity:0; transform:translateY(14px);
-    transition:opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+    display:inline-block; cursor:default;
+    opacity:0; transform:translateY(20px);
+    transition:opacity 600ms var(--ease-out), transform 600ms var(--ease-out), translate 220ms var(--ease-out);
   }
   .promo-amount.in{
     opacity:1; transform:none;
-    animation:promo-amount-glow 500ms var(--ease-out);
+    animation:promo-amount-glow 600ms var(--ease-out),
+               promo-amount-breathe 3.2s var(--ease-in-out) 600ms infinite;
   }
+  .promo-amount:hover{ translate:0 -6px; }
   @keyframes promo-amount-glow{
     0%{ text-shadow:0 0 0 rgba(247,169,64,0); }
-    45%{ text-shadow:0 0 16px rgba(247,169,64,.6); }
+    45%{ text-shadow:0 0 24px rgba(247,169,64,.85); }
     100%{ text-shadow:0 0 0 rgba(247,169,64,0); }
+  }
+  @keyframes promo-amount-breathe{
+    0%,100%{ scale:1; }
+    50%{ scale:1.035; }
   }
   @media (prefers-reduced-motion:reduce){
     .promo-amount{ opacity:1; transform:none; transition:none; animation:none; }
+    .promo-amount.in{ animation:none; }
   }
   .promo-card__text{
     color:var(--gray); font-size:17px; margin-top:16px;
