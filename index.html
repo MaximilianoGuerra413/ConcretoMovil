@@ -539,6 +539,23 @@
   }
   .promo-card__title{ font-size:clamp(28px,4vw,40px); }
   .promo-card__title .accent{ color:var(--orange); }
+  .promo-amount{
+    display:inline-block;
+    opacity:0; transform:translateY(14px);
+    transition:opacity 500ms var(--ease-out), transform 500ms var(--ease-out);
+  }
+  .promo-amount.in{
+    opacity:1; transform:none;
+    animation:promo-amount-glow 500ms var(--ease-out);
+  }
+  @keyframes promo-amount-glow{
+    0%{ text-shadow:0 0 0 rgba(247,169,64,0); }
+    45%{ text-shadow:0 0 16px rgba(247,169,64,.6); }
+    100%{ text-shadow:0 0 0 rgba(247,169,64,0); }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .promo-amount{ opacity:1; transform:none; transition:none; animation:none; }
+  }
   .promo-card__text{
     color:var(--gray); font-size:17px; margin-top:16px;
     max-width:520px; margin-inline:auto;
@@ -969,7 +986,7 @@
   <div class="wrap">
     <div class="promo-card reveal">
       <span class="promo-card__badge">Promoción exclusiva</span>
-      <h2 class="promo-card__title">¡Obtén hasta <span class="accent">$50,000 MXN</span> de descuento!</h2>
+      <h2 class="promo-card__title">¡Obtén hasta <span class="accent promo-amount">$50,000 MXN</span> de descuento!</h2>
       <p class="promo-card__text">Solicita tu cotización y conoce si tu proyecto aplica para esta promoción exclusiva. Nuestro equipo te brindará atención personalizada y una propuesta adaptada a tus necesidades.</p>
       <ul class="promo-card__perks">
         <li><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>Atención personalizada.</li>
@@ -1123,6 +1140,17 @@
     });
   }, { threshold:0.4 });
   document.querySelectorAll('.title-underline').forEach(el=>titleIO.observe(el));
+
+  // Énfasis animado (una sola vez) para la cifra de descuento de la promoción
+  const promoAmountIO = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        promoAmountIO.unobserve(e.target);
+      }
+    });
+  }, { threshold:0.12 });
+  document.querySelectorAll('.promo-amount').forEach(el=>promoAmountIO.observe(el));
 
   // El fondo del Hero ya va incrustado directamente en el CSS (no requiere fallback).
 
