@@ -364,7 +364,7 @@
   .gallery{ display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:36px; }
   .gallery.reveal{ opacity:1; transform:none; transition:none; }
   .gallery img{
-    width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:12px;
+    width:100%; aspect-ratio:1/1; object-fit:contain; border-radius:12px;
     opacity:0; transform:translateY(16px) scale(.97);
     transition:opacity 550ms var(--ease-out), transform 550ms var(--ease-out),
                box-shadow 300ms var(--ease-out);
