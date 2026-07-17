@@ -549,7 +549,10 @@
     animation:promo-amount-glow 600ms var(--ease-out),
                promo-amount-breathe 3.2s var(--ease-in-out) 600ms infinite;
   }
-  .promo-amount:hover{ translate:0 -6px; }
+  .promo-amount.in:hover{
+    translate:0 -6px;
+    animation-play-state:running, paused;
+  }
   @keyframes promo-amount-glow{
     0%{ text-shadow:0 0 0 rgba(247,169,64,0); }
     45%{ text-shadow:0 0 24px rgba(247,169,64,.85); }
